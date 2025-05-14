@@ -44,3 +44,5 @@ Example usage
 ```
 python PR_mutation.py -i PR_gene.all.fna -o PR_gene.pro.aln -p PR_gene.pro.fna -t PR_gene.mutation.tsv
 ```
+
+## IS disruption detection ##
