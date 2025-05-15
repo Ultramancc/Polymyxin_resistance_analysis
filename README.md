@@ -46,3 +46,31 @@ python PR_mutation.py -i PR_gene.all.fna -o PR_gene.pro.aln -p PR_gene.pro.fna -
 ```
 
 ## IS disruption detection ##
+The incomplete PR related genes screening is similar to the above analysis, with a coverage setting of 30% to filter the incomplete genes.  
+IS detection by blastn against to ISfinder database (https://isfinder.biotoul.fr/)  
+```
+cut -f 1-2 incopmlete_gene_filter.tsv > incopmlete_gene_filter_name.txt
+while read A B
+do
+seqkit grep -r -p $B $A | blastn -db IS_finder -outfmt 6 >> IS_result.txt
+done < imcpmlete_gene_filter_name.txt
+rm imcpmlete_gene_filter_name.txt
+```
+Insertion site parse. The input file is generated from Abricate output. The IS file is blastn output file with outfmt=6.
+```
+usage: IS_site_parse.py [-h] -i INPUT -g GENE -o OUTPUT
+
+Determine IS insertion sites relative to gene locations.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        Input IS blastn results file (outfmt=6).
+  -g GENE, --gene GENE  Input gene results file.
+  -o OUTPUT, --output OUTPUT
+                        Output file to save the results.
+```
+Example usage
+```
+python IS_site_parse.py -i IS_result.txt -g imcpmlete_gene_filter.tsv -o IS_insertion_site.tsv
+```
