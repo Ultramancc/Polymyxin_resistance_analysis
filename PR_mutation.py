@@ -8,6 +8,7 @@ import sys
 def translate_sequences(input_file, protein_file):
     """
     Translates nucleotide sequences to protein sequences.
+    Outputs the protein sequences to a file.
     """
     with open(protein_file, "w") as output_handle:
         for record in SeqIO.parse(input_file, "fasta"):
@@ -18,6 +19,7 @@ def translate_sequences(input_file, protein_file):
                 output_handle.write(f">{record.id}\n{str(protein_seq)}\n")
             except Exception as e:
                 print(f"Error translating {record.id}: {e}")
+    print(f"Protein sequences saved to {protein_file}")
 
 def run_muscle(input_file, output_file):
     """
@@ -83,20 +85,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Translate nucleotide sequences to proteins, align them, and find mutations.")
     parser.add_argument("-i", "--input", required=True, help="Input nucleotide FASTA file (e.g., sequence.all.fna)")
     parser.add_argument("-o", "--output", required=True, help="Output alignment file (e.g., protein.aln.fna)")
+    parser.add_argument("-p", "--protein", required=True, help="Output translated protein file (e.g., protein.all.fna)")
     parser.add_argument("-t", "--table", required=True, help="Output mutation table file (e.g., mutations.tsv)")
     
     args = parser.parse_args()
 
-    # Define intermediate protein file
-    protein_file = "protein.all.fna"
-
     # Step 1: Translate nucleotide sequences to protein sequences
     print("Translating sequences...")
-    translate_sequences(args.input, protein_file)
+    translate_sequences(args.input, args.protein)
 
     # Step 2: Run MUSCLE to align protein sequences
     print("Generating alignment...")
-    run_muscle(protein_file, args.output)
+    run_muscle(args.protein, args.output)
 
     # Step 3: Identify mutations
     print("Identifying mutations...")
